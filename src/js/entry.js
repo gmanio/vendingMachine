@@ -1,16 +1,10 @@
-import Money from "./wallet/money.js";
+import Util from "./configure/Util";
+import Machine from "./machine/MachineView.js";
 
-export default class App {
-
+class App {
     constructor() {
-        const ctx = this;
-
-        const oMoney = new Money();
-
-        console.log('dsdf');
+        this.oMachine = new Machine();
     }
-
 }
 
-
-new App();
+window.oApp = new App();
