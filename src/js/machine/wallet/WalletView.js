@@ -1,8 +1,7 @@
-import Draggable from '../component/Draggable';
+import Draggable from '../../component/Draggable';
 
-import {coinMap} from '../configure/Config';
+import {coinMap} from '../Defaults';
 import WalletModel from './WalletModel'
-
 
 class WalletView {
     constructor() {

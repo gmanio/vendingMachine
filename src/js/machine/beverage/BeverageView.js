@@ -4,7 +4,7 @@ class BeverageView {
     constructor() {
         this._cachedElements();
 
-        this._suffled();
+        this._shuffled();
 
         this.oModel = new BeverageModel();
 
@@ -41,7 +41,7 @@ class BeverageView {
 
     }
 
-    _suffled() {
+    _shuffled() {
         let parent = this.$productArea.find('ul');
         let child = parent.children();
 

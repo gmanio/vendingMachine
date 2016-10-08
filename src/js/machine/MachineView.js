@@ -3,11 +3,11 @@
  */
 import Droppable from '../component/Droppable';
 
-import BeverageView from '../beverage/BeverageView';
-import WalletView from '../wallet/WalletView';
-import DisplayView from '../console/DisplayView';
+import BeverageView from './beverage/BeverageView';
+import WalletView from './wallet/WalletView';
+import DisplayView from './display/DisplayView';
 
-import {coinMap, moneyDetector} from '../configure/Config';
+import {coinMap, moneyDetector} from './Defaults';
 
 class Machine {
     constructor() {

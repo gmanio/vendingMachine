@@ -35,7 +35,7 @@ class Droppable {
     }
 
     deactivate() {
-        // this.$document.off('mouseup', this.sDropElClassName, $.proxy(this._isConflict, this));
+        this.$body.off('mouseup', this.sDropElClassName, $.proxy(this._isConflict, this));
     }
 }
 

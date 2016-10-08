@@ -1,4 +1,4 @@
-import Util from "./configure/Util";
+import Util from "./helper/Util";
 import Machine from "./machine/MachineView.js";
 
 class App {

@@ -9,8 +9,8 @@ module.exports = {
     // devtool: 'inline-source-map',  //<== chrome debugger error;
 
     entry: {
-        // style: './src/css/machine.css',
-        bundle: ['./src/js/entry.js']
+        style: ['./src/css/machine.css'],
+        bundle: ['./src/js/App.js']
     },
 
     output: {
@@ -53,7 +53,7 @@ module.exports = {
         }),
         new webpack.ProvidePlugin({
             $: "jquery",
-            jQuery : 'jquery'
+            jQuery: 'jquery'
         }),
         new webpack.optimize.UglifyJsPlugin({
             compress: {

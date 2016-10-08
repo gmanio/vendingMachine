@@ -3,15 +3,14 @@ class Draggable {
         this.sDeligateDragClassName = sClassName;
 
         this.activate();
-
     }
 
     activate() {
-        this.$document = $('body');
+        this.$body = $('body');
 
-        this.$document.on('mousedown', this.sDeligateDragClassName, $.proxy(this.onDragStart, this));
-        this.$document.on('mousemove', this.sDeligateDragClassName, $.proxy(this.onDragging, this));
-        this.$document.on('mouseup', this.sDeligateDragClassName, $.proxy(this.onDragEnd, this));
+        this.$body.on('mousedown', this.sDeligateDragClassName, $.proxy(this.onDragStart, this));
+        this.$body.on('mousemove', this.sDeligateDragClassName, $.proxy(this.onDragging, this));
+        this.$body.on('mouseup', this.sDeligateDragClassName, $.proxy(this.onDragEnd, this));
     }
 
     onDragStart(e) {
@@ -22,9 +21,7 @@ class Draggable {
         this.$copiedDraggableArea = this.$draggable.clone();
         this.$copiedDraggableArea.css({'position': 'absolute', 'z-index': 2147483647});
 
-
         $(this).triggerHandler('dragStart', this.$copiedDraggableArea);
-
 
         this.onDragging(e);
     }
@@ -50,9 +47,9 @@ class Draggable {
     }
 
     deactivate() {
-        this.$document.off('mousedown', this.sDeligateDragClassName, $.proxy(this.onDragStart, this));
-        this.$document.off('mousemove', $.proxy(this.onDragging, this));
-        this.$document.off('mouseup', $.proxy(this.onDragEnd, this));
+        this.$body.off('mousedown', this.sDeligateDragClassName, $.proxy(this.onDragStart, this));
+        this.$body.off('mousemove', $.proxy(this.onDragging, this));
+        this.$body.off('mouseup', $.proxy(this.onDragEnd, this));
     }
 }
 
