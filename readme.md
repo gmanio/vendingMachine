@@ -1,7 +1,8 @@
-# VendingMachine ( ES6 Version )
+# VendingMachine ( ECMAscript 6 Version )
 
 [ View ] : (https://gman.io/vendingMachine/)
 
+It is a good guidance for studying ES6 & MV* pattern.
 powered by Babel + Webpack + jQuery.
 
 > GmanPark @ 2016
