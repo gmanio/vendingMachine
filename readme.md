@@ -1,5 +1,7 @@
 # VendingMachine ( ES6 Version )
 
+[ View ] : (https://gman.io/vendingMachine/)
+
 powered by Babel + Webpack + jQuery.
 
 > GmanPark @ 2016
