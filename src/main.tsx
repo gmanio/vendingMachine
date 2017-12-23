@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import "./css/machine.css";
+import BeverageItems from './components/BeverageItem';
 
 
 ReactDOM.render(
@@ -18,16 +19,17 @@ ReactDOM.render(
           <div className="product_area" id="_product_area">
             <h2 className="blind">상품선택</h2>
             {/*<!-- [D] 새로고침 할때 마다 렌덤으로 출력, 품절은 li엘리먼트에 soldout클래스를 추가하고, 아래 <span className="soldout_msg">품절</span> 로 추가하고 button 은 disabed 시킴 --> */}
-            <ul>
-              <li className="item1"><button><span className="blind">펩시</span></button><span>300원</span></li>
-              <li className="item2"><button><span className="blind">V10</span></button><span>200원</span></li>
-              <li className="item3"><button><span className="blind">칸타타</span></button><span>700원</span></li>
-              <li className="item4"><button><span className="blind">2%</span></button><span>500원</span></li>
-              <li className="item5"><button><span className="blind">환타</span></button><span>800원</span></li>
-              <li className="item6"><button><span className="blind">식혜</span></button><span>100원</span></li>
-              <li className="item7"><button><span className="blind">비타500</span></button><span>400원</span></li>
-              <li className="item8"><button><span className="blind">박카스</span></button><span>600원</span></li>
-            </ul>
+            <BeverageItems/>
+            {/*<ul>*/}
+              {/*<li className="item1"><button><span className="blind">펩시</span></button><span>300원</span></li>*/}
+              {/*<li className="item2"><button><span className="blind">V10</span></button><span>200원</span></li>*/}
+              {/*<li className="item3"><button><span className="blind">칸타타</span></button><span>700원</span></li>*/}
+              {/*<li className="item4"><button><span className="blind">2%</span></button><span>500원</span></li>*/}
+              {/*<li className="item5"><button><span className="blind">환타</span></button><span>800원</span></li>*/}
+              {/*<li className="item6"><button><span className="blind">식혜</span></button><span>100원</span></li>*/}
+              {/*<li className="item7"><button><span className="blind">비타500</span></button><span>400원</span></li>*/}
+              {/*<li className="item8"><button><span className="blind">박카스</span></button><span>600원</span></li>*/}
+            {/*</ul>*/}
           </div>
           <div className="pay_area">
             <h2 className="blind">금전투입</h2>

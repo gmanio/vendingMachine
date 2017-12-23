@@ -6,8 +6,6 @@ interface AppState {
 }
 
 export default class App extends React.Component<{}, AppState> {
-  private initialState: AppState = { timesClicked: 0, on: false };
-
   constructor(props: {}) {
     super(props);
   }

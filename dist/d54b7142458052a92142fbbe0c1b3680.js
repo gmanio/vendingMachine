@@ -65,7 +65,7 @@ require = (function (modules, cache, entry) {
 
   // Override the current require with this new one
   return newRequire;
-})({11:[function(require,module,exports) {
+})({15:[function(require,module,exports) {
 /*
 object-assign
 (c) Sindre Sorhus
@@ -157,7 +157,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],12:[function(require,module,exports) {
+},{}],25:[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -175,7 +175,7 @@ if ("development" !== 'production') {
 }
 
 module.exports = emptyObject;
-},{}],13:[function(require,module,exports) {
+},{}],19:[function(require,module,exports) {
 "use strict";
 
 /**
@@ -212,7 +212,7 @@ emptyFunction.thatReturnsArgument = function (arg) {
 };
 
 module.exports = emptyFunction;
-},{}],7:[function(require,module,exports) {
+},{}],13:[function(require,module,exports) {
 /** @license React v16.2.0
  * react.production.min.js
  *
@@ -235,7 +235,7 @@ var U={Children:{map:function(a,b,e){if(null==a)return a;var c=[];T(a,c,null,b,e
 d=a.key,g=a.ref,k=a._owner;if(null!=b){void 0!==b.ref&&(g=b.ref,k=G.current);void 0!==b.key&&(d=""+b.key);if(a.type&&a.type.defaultProps)var f=a.type.defaultProps;for(h in b)H.call(b,h)&&!I.hasOwnProperty(h)&&(c[h]=void 0===b[h]&&void 0!==f?f[h]:b[h])}var h=arguments.length-2;if(1===h)c.children=e;else if(1<h){f=Array(h);for(var l=0;l<h;l++)f[l]=arguments[l+2];c.children=f}return{$$typeof:r,type:a.type,key:d,ref:g,props:c,_owner:k}},createFactory:function(a){var b=J.bind(null,a);b.type=a;return b},
 isValidElement:K,version:"16.2.0",__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentOwner:G,assign:m}},V=Object.freeze({default:U}),W=V&&U||V;module.exports=W["default"]?W["default"]:W;
 
-},{"object-assign":11,"fbjs/lib/emptyObject":12,"fbjs/lib/emptyFunction":13}],23:[function(require,module,exports) {
+},{"object-assign":15,"fbjs/lib/emptyObject":25,"fbjs/lib/emptyFunction":19}],17:[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -249,61 +249,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],15:[function(require,module,exports) {
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-'use strict';
-
-/**
- * Use invariant() to assert state which your program assumes to be true.
- *
- * Provide sprintf-style format (only %s is supported) and arguments
- * to provide information about what broke and what you were
- * expecting.
- *
- * The invariant message will be stripped in production, but the invariant
- * will remain to ensure logic does not differ in production.
- */
-
-var validateFormat = function validateFormat(format) {};
-
-if ("development" !== 'production') {
-  validateFormat = function validateFormat(format) {
-    if (format === undefined) {
-      throw new Error('invariant requires an error message argument');
-    }
-  };
-}
-
-function invariant(condition, format, a, b, c, d, e, f) {
-  validateFormat(format);
-
-  if (!condition) {
-    var error;
-    if (format === undefined) {
-      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
-    } else {
-      var args = [a, b, c, d, e, f];
-      var argIndex = 0;
-      error = new Error(format.replace(/%s/g, function () {
-        return args[argIndex++];
-      }));
-      error.name = 'Invariant Violation';
-    }
-
-    error.framesToPop = 1; // we don't care about invariant's own frame
-    throw error;
-  }
-}
-
-module.exports = invariant;
-},{}],16:[function(require,module,exports) {
+},{}],26:[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -366,7 +312,61 @@ if ("development" !== 'production') {
 }
 
 module.exports = warning;
-},{"./emptyFunction":13}],14:[function(require,module,exports) {
+},{"./emptyFunction":19}],27:[function(require,module,exports) {
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+'use strict';
+
+/**
+ * Use invariant() to assert state which your program assumes to be true.
+ *
+ * Provide sprintf-style format (only %s is supported) and arguments
+ * to provide information about what broke and what you were
+ * expecting.
+ *
+ * The invariant message will be stripped in production, but the invariant
+ * will remain to ensure logic does not differ in production.
+ */
+
+var validateFormat = function validateFormat(format) {};
+
+if ("development" !== 'production') {
+  validateFormat = function validateFormat(format) {
+    if (format === undefined) {
+      throw new Error('invariant requires an error message argument');
+    }
+  };
+}
+
+function invariant(condition, format, a, b, c, d, e, f) {
+  validateFormat(format);
+
+  if (!condition) {
+    var error;
+    if (format === undefined) {
+      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+    } else {
+      var args = [a, b, c, d, e, f];
+      var argIndex = 0;
+      error = new Error(format.replace(/%s/g, function () {
+        return args[argIndex++];
+      }));
+      error.name = 'Invariant Violation';
+    }
+
+    error.framesToPop = 1; // we don't care about invariant's own frame
+    throw error;
+  }
+}
+
+module.exports = invariant;
+},{}],16:[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -426,7 +426,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 }
 
 module.exports = checkPropTypes;
-},{"./lib/ReactPropTypesSecret":23,"fbjs/lib/invariant":15,"fbjs/lib/warning":16}],8:[function(require,module,exports) {
+},{"./lib/ReactPropTypesSecret":17,"fbjs/lib/warning":26,"fbjs/lib/invariant":27}],14:[function(require,module,exports) {
 /** @license React v16.2.0
  * react.development.js
  *
@@ -1778,7 +1778,7 @@ if ("development" !== "production") {
     module.exports = react;
   })();
 }
-},{"object-assign":11,"fbjs/lib/emptyObject":12,"fbjs/lib/emptyFunction":13,"prop-types/checkPropTypes":14,"fbjs/lib/invariant":15,"fbjs/lib/warning":16}],5:[function(require,module,exports) {
+},{"object-assign":15,"prop-types/checkPropTypes":16,"fbjs/lib/emptyObject":25,"fbjs/lib/emptyFunction":19,"fbjs/lib/warning":26,"fbjs/lib/invariant":27}],10:[function(require,module,exports) {
 'use strict';
 
 if ("development" === 'production') {
@@ -1786,7 +1786,7 @@ if ("development" === 'production') {
 } else {
   module.exports = require('./cjs/react.development.js');
 }
-},{"./cjs/react.production.min.js":7,"./cjs/react.development.js":8}],17:[function(require,module,exports) {
+},{"./cjs/react.production.min.js":13,"./cjs/react.development.js":14}],18:[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -1820,44 +1820,7 @@ var ExecutionEnvironment = {
 };
 
 module.exports = ExecutionEnvironment;
-},{}],18:[function(require,module,exports) {
-'use strict';
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @typechecks
- */
-
-/* eslint-disable fb-www/typeof-undefined */
-
-/**
- * Same as document.activeElement but wraps in a try-catch block. In IE it is
- * not safe to call document.activeElement if there is nothing focused.
- *
- * The activeElement will be null only if the document or document body is not
- * yet defined.
- *
- * @param {?DOMDocument} doc Defaults to current document.
- * @return {?DOMElement}
- */
-function getActiveElement(doc) /*?DOMElement*/{
-  doc = doc || (typeof document !== 'undefined' ? document : undefined);
-  if (typeof doc === 'undefined') {
-    return null;
-  }
-  try {
-    return doc.activeElement || doc.body;
-  } catch (e) {
-    return doc.body;
-  }
-}
-
-module.exports = getActiveElement;
-},{}],19:[function(require,module,exports) {
+},{}],20:[function(require,module,exports) {
 'use strict';
 
 /**
@@ -1932,32 +1895,7 @@ var EventListener = {
 };
 
 module.exports = EventListener;
-},{"./emptyFunction":13}],20:[function(require,module,exports) {
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-'use strict';
-
-/**
- * @param {DOMElement} node input/textarea to focus
- */
-
-function focusNode(node) {
-  // IE8 can throw "Can't move focus to the control because it is invisible,
-  // not enabled, or of a type that does not accept the focus." for all kinds of
-  // reasons that are too expensive and fragile to test.
-  try {
-    node.focus();
-  } catch (e) {}
-}
-
-module.exports = focusNode;
-},{}],21:[function(require,module,exports) {
+},{"./emptyFunction":19}],21:[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -2023,7 +1961,7 @@ function shallowEqual(objA, objB) {
 }
 
 module.exports = shallowEqual;
-},{}],25:[function(require,module,exports) {
+},{}],33:[function(require,module,exports) {
 'use strict';
 
 /**
@@ -2046,7 +1984,7 @@ function isNode(object) {
 }
 
 module.exports = isNode;
-},{}],24:[function(require,module,exports) {
+},{}],30:[function(require,module,exports) {
 'use strict';
 
 /**
@@ -2069,7 +2007,7 @@ function isTextNode(object) {
 }
 
 module.exports = isTextNode;
-},{"./isNode":25}],22:[function(require,module,exports) {
+},{"./isNode":33}],22:[function(require,module,exports) {
 'use strict';
 
 /**
@@ -2107,7 +2045,69 @@ function containsNode(outerNode, innerNode) {
 }
 
 module.exports = containsNode;
-},{"./isTextNode":24}],9:[function(require,module,exports) {
+},{"./isTextNode":30}],23:[function(require,module,exports) {
+'use strict';
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @typechecks
+ */
+
+/* eslint-disable fb-www/typeof-undefined */
+
+/**
+ * Same as document.activeElement but wraps in a try-catch block. In IE it is
+ * not safe to call document.activeElement if there is nothing focused.
+ *
+ * The activeElement will be null only if the document or document body is not
+ * yet defined.
+ *
+ * @param {?DOMDocument} doc Defaults to current document.
+ * @return {?DOMElement}
+ */
+function getActiveElement(doc) /*?DOMElement*/{
+  doc = doc || (typeof document !== 'undefined' ? document : undefined);
+  if (typeof doc === 'undefined') {
+    return null;
+  }
+  try {
+    return doc.activeElement || doc.body;
+  } catch (e) {
+    return doc.body;
+  }
+}
+
+module.exports = getActiveElement;
+},{}],24:[function(require,module,exports) {
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+'use strict';
+
+/**
+ * @param {DOMElement} node input/textarea to focus
+ */
+
+function focusNode(node) {
+  // IE8 can throw "Can't move focus to the control because it is invisible,
+  // not enabled, or of a type that does not accept the focus." for all kinds of
+  // reasons that are too expensive and fragile to test.
+  try {
+    node.focus();
+  } catch (e) {}
+}
+
+module.exports = focusNode;
+},{}],11:[function(require,module,exports) {
 /** @license React v16.2.0
  * react-dom.production.min.js
  *
@@ -2338,7 +2338,7 @@ var Sg={createPortal:Qg,findDOMNode:function(a){if(null==a)return null;if(1===a.
 E("40");return a._reactRootContainer?(Z.unbatchedUpdates(function(){Pg(null,null,a,!1,function(){a._reactRootContainer=null})}),!0):!1},unstable_createPortal:Qg,unstable_batchedUpdates:tc,unstable_deferredUpdates:Z.deferredUpdates,flushSync:Z.flushSync,__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{EventPluginHub:mb,EventPluginRegistry:Va,EventPropagators:Cb,ReactControlledComponent:qc,ReactDOMComponentTree:sb,ReactDOMEventListener:xd}};
 Z.injectIntoDevTools({findFiberByHostInstance:pb,bundleType:0,version:"16.2.0",rendererPackageName:"react-dom"});var Tg=Object.freeze({default:Sg}),Ug=Tg&&Sg||Tg;module.exports=Ug["default"]?Ug["default"]:Ug;
 
-},{"react":5,"object-assign":11,"fbjs/lib/ExecutionEnvironment":17,"fbjs/lib/getActiveElement":18,"fbjs/lib/EventListener":19,"fbjs/lib/emptyFunction":13,"fbjs/lib/focusNode":20,"fbjs/lib/shallowEqual":21,"fbjs/lib/containsNode":22,"fbjs/lib/emptyObject":12}],28:[function(require,module,exports) {
+},{"react":10,"object-assign":15,"fbjs/lib/ExecutionEnvironment":18,"fbjs/lib/emptyFunction":19,"fbjs/lib/EventListener":20,"fbjs/lib/shallowEqual":21,"fbjs/lib/containsNode":22,"fbjs/lib/getActiveElement":23,"fbjs/lib/focusNode":24,"fbjs/lib/emptyObject":25}],32:[function(require,module,exports) {
 'use strict';
 
 /**
@@ -2369,7 +2369,7 @@ function hyphenate(string) {
 }
 
 module.exports = hyphenate;
-},{}],26:[function(require,module,exports) {
+},{}],28:[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -2406,7 +2406,7 @@ function hyphenateStyleName(string) {
 }
 
 module.exports = hyphenateStyleName;
-},{"./hyphenate":28}],29:[function(require,module,exports) {
+},{"./hyphenate":32}],31:[function(require,module,exports) {
 "use strict";
 
 /**
@@ -2436,7 +2436,7 @@ function camelize(string) {
 }
 
 module.exports = camelize;
-},{}],27:[function(require,module,exports) {
+},{}],29:[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -2474,7 +2474,7 @@ function camelizeStyleName(string) {
 }
 
 module.exports = camelizeStyleName;
-},{"./camelize":29}],10:[function(require,module,exports) {
+},{"./camelize":31}],12:[function(require,module,exports) {
 /** @license React v16.2.0
  * react-dom.development.js
  *
@@ -17832,7 +17832,7 @@ if ("development" !== "production") {
     module.exports = reactDom;
   })();
 }
-},{"react":5,"fbjs/lib/ExecutionEnvironment":17,"object-assign":11,"fbjs/lib/emptyFunction":13,"fbjs/lib/EventListener":19,"fbjs/lib/getActiveElement":18,"fbjs/lib/shallowEqual":21,"fbjs/lib/containsNode":22,"fbjs/lib/focusNode":20,"fbjs/lib/emptyObject":12,"prop-types/checkPropTypes":14,"fbjs/lib/warning":16,"fbjs/lib/invariant":15,"fbjs/lib/hyphenateStyleName":26,"fbjs/lib/camelizeStyleName":27}],6:[function(require,module,exports) {
+},{"react":10,"object-assign":15,"prop-types/checkPropTypes":16,"fbjs/lib/warning":26,"fbjs/lib/invariant":27,"fbjs/lib/ExecutionEnvironment":18,"fbjs/lib/emptyFunction":19,"fbjs/lib/getActiveElement":23,"fbjs/lib/containsNode":22,"fbjs/lib/EventListener":20,"fbjs/lib/shallowEqual":21,"fbjs/lib/focusNode":24,"fbjs/lib/hyphenateStyleName":28,"fbjs/lib/emptyObject":25,"fbjs/lib/camelizeStyleName":29}],9:[function(require,module,exports) {
 'use strict';
 
 function checkDCE() {
@@ -17868,7 +17868,7 @@ if ("development" === 'production') {
 } else {
   module.exports = require('./cjs/react-dom.development.js');
 }
-},{"./cjs/react-dom.production.min.js":9,"./cjs/react-dom.development.js":10}],33:[function(require,module,exports) {
+},{"./cjs/react-dom.production.min.js":11,"./cjs/react-dom.development.js":12}],8:[function(require,module,exports) {
 var bundleURL = null;
 function getBundleURLCached() {
   if (!bundleURL) {
@@ -17899,7 +17899,7 @@ function getBaseURL(url) {
 exports.getBundleURL = getBundleURLCached;
 exports.getBaseURL = getBaseURL;
 
-},{}],31:[function(require,module,exports) {
+},{}],6:[function(require,module,exports) {
 var bundle = require('./bundle-url');
 
 function updateLink(link) {
@@ -17931,18 +17931,90 @@ function reloadCSS() {
 
 module.exports = reloadCSS;
 
-},{"./bundle-url":33}],30:[function(require,module,exports) {
+},{"./bundle-url":8}],5:[function(require,module,exports) {
 
         var reloadCSS = require('_css_loader');
         module.hot.dispose(reloadCSS);
         module.hot.accept(reloadCSS);
       
-},{"_css_loader":31,"./../img/spr_vm.png":["77d41771f2679ae5c0665c9607e4c11a.png",32]}],4:[function(require,module,exports) {
+},{"_css_loader":6,"./../img/spr_vm.png":["77d41771f2679ae5c0665c9607e4c11a.png",7]}],35:[function(require,module,exports) {
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = require("react");
+var BeverageItems = /** @class */ (function (_super) {
+    __extends(BeverageItems, _super);
+    function BeverageItems(props) {
+        var _this = _super.call(this, props) || this;
+        _this.beveragItem = [
+            { name: '펩시', value: 300 },
+            { name: 'v10', value: 200 },
+            { name: '칸타타', value: 700 },
+            { name: '2%', value: 500 },
+            { name: '환타', value: 800 },
+            { name: '식혜', value: 100 },
+            { name: '비타500', value: 400 },
+            { name: '박카스', value: 600 },
+        ];
+        return _this;
+    }
+    BeverageItems.prototype.randomSort = function () {
+    };
+    BeverageItems.prototype.render = function () {
+        return (React.createElement("ul", null,
+            React.createElement("li", { className: "item1" },
+                React.createElement("button", null,
+                    React.createElement("span", { className: "blind" }, "\uD3A9\uC2DC")),
+                React.createElement("span", null, "300\uC6D0")),
+            React.createElement("li", { className: "item2" },
+                React.createElement("button", null,
+                    React.createElement("span", { className: "blind" }, "V10")),
+                React.createElement("span", null, "200\uC6D0")),
+            React.createElement("li", { className: "item3" },
+                React.createElement("button", null,
+                    React.createElement("span", { className: "blind" }, "\uCE78\uD0C0\uD0C0")),
+                React.createElement("span", null, "700\uC6D0")),
+            React.createElement("li", { className: "item4" },
+                React.createElement("button", null,
+                    React.createElement("span", { className: "blind" }, "2%")),
+                React.createElement("span", null, "500\uC6D0")),
+            React.createElement("li", { className: "item5" },
+                React.createElement("button", null,
+                    React.createElement("span", { className: "blind" }, "\uD658\uD0C0")),
+                React.createElement("span", null, "800\uC6D0")),
+            React.createElement("li", { className: "item6" },
+                React.createElement("button", null,
+                    React.createElement("span", { className: "blind" }, "\uC2DD\uD61C")),
+                React.createElement("span", null, "100\uC6D0")),
+            React.createElement("li", { className: "item7" },
+                React.createElement("button", null,
+                    React.createElement("span", { className: "blind" }, "\uBE44\uD0C0500")),
+                React.createElement("span", null, "400\uC6D0")),
+            React.createElement("li", { className: "item8" },
+                React.createElement("button", null,
+                    React.createElement("span", { className: "blind" }, "\uBC15\uCE74\uC2A4")),
+                React.createElement("span", null, "600\uC6D0"))));
+    };
+    return BeverageItems;
+}(React.Component));
+exports.default = BeverageItems;
+
+},{"react":10}],4:[function(require,module,exports) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
 var ReactDOM = require("react-dom");
 require("./css/machine.css");
+var BeverageItem_1 = require("./components/BeverageItem");
 ReactDOM.render(React.createElement("div", { id: "wrap" },
     React.createElement("div", { id: "header" },
         React.createElement("h1", null, "Vending Machine")),
@@ -17951,39 +18023,7 @@ ReactDOM.render(React.createElement("div", { id: "wrap" },
             React.createElement("div", { className: "machine" },
                 React.createElement("div", { className: "product_area", id: "_product_area" },
                     React.createElement("h2", { className: "blind" }, "\uC0C1\uD488\uC120\uD0DD"),
-                    React.createElement("ul", null,
-                        React.createElement("li", { className: "item1" },
-                            React.createElement("button", null,
-                                React.createElement("span", { className: "blind" }, "\uD3A9\uC2DC")),
-                            React.createElement("span", null, "300\uC6D0")),
-                        React.createElement("li", { className: "item2" },
-                            React.createElement("button", null,
-                                React.createElement("span", { className: "blind" }, "V10")),
-                            React.createElement("span", null, "200\uC6D0")),
-                        React.createElement("li", { className: "item3" },
-                            React.createElement("button", null,
-                                React.createElement("span", { className: "blind" }, "\uCE78\uD0C0\uD0C0")),
-                            React.createElement("span", null, "700\uC6D0")),
-                        React.createElement("li", { className: "item4" },
-                            React.createElement("button", null,
-                                React.createElement("span", { className: "blind" }, "2%")),
-                            React.createElement("span", null, "500\uC6D0")),
-                        React.createElement("li", { className: "item5" },
-                            React.createElement("button", null,
-                                React.createElement("span", { className: "blind" }, "\uD658\uD0C0")),
-                            React.createElement("span", null, "800\uC6D0")),
-                        React.createElement("li", { className: "item6" },
-                            React.createElement("button", null,
-                                React.createElement("span", { className: "blind" }, "\uC2DD\uD61C")),
-                            React.createElement("span", null, "100\uC6D0")),
-                        React.createElement("li", { className: "item7" },
-                            React.createElement("button", null,
-                                React.createElement("span", { className: "blind" }, "\uBE44\uD0C0500")),
-                            React.createElement("span", null, "400\uC6D0")),
-                        React.createElement("li", { className: "item8" },
-                            React.createElement("button", null,
-                                React.createElement("span", { className: "blind" }, "\uBC15\uCE74\uC2A4")),
-                            React.createElement("span", null, "600\uC6D0")))),
+                    React.createElement(BeverageItem_1.default, null)),
                 React.createElement("div", { className: "pay_area" },
                     React.createElement("h2", { className: "blind" }, "\uAE08\uC804\uD22C\uC785"),
                     React.createElement("div", { className: "insert_area", id: "_insert_area" },
@@ -18052,7 +18092,7 @@ ReactDOM.render(React.createElement("div", { id: "wrap" },
         React.createElement("address", null,
             React.createElement("strong", null, "Vending Machine")))), document.getElementById("root"));
 
-},{"react":5,"react-dom":6,"./css/machine.css":30}],0:[function(require,module,exports) {
+},{"react":10,"react-dom":9,"./css/machine.css":5,"./components/BeverageItem":35}],0:[function(require,module,exports) {
 var global = (1, eval)('this');
 var OldModule = module.bundle.Module;
 function Module() {
@@ -18070,7 +18110,7 @@ function Module() {
 module.bundle.Module = Module;
 
 if (!module.bundle.parent) {
-  var ws = new WebSocket('ws://localhost:57723/');
+  var ws = new WebSocket('ws://localhost:59069/');
   ws.onmessage = function(event) {
     var data = JSON.parse(event.data);
 
