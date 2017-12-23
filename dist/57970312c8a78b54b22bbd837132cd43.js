@@ -66,5 +66,7 @@ require = (function (modules, cache, entry) {
   // Override the current require with this new one
   return newRequire;
 })({5:[function(require,module,exports) {
-var t=function(){alert("tester")};document.addEventListener("DOMContentLoaded",function(){t()});
-},{}]},{},[5])
+
+},{"./../img/spr_vm.png":["77d41771f2679ae5c0665c9607e4c11a.png",6]}],4:[function(require,module,exports) {
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),require("./css/machine.css");var e=function(){};document.addEventListener("DOMContentLoaded",function(){e()});
+},{"./css/machine.css":5}]},{},[4])
