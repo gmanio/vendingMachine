@@ -65,7 +65,76 @@ require = (function (modules, cache, entry) {
 
   // Override the current require with this new one
   return newRequire;
-})({15:[function(require,module,exports) {
+})({7:[function(require,module,exports) {
+var bundleURL = null;
+function getBundleURLCached() {
+  if (!bundleURL) {
+    bundleURL = getBundleURL();
+  }
+
+  return bundleURL;
+}
+
+function getBundleURL() {
+  // Attempt to find the URL of the current script and use that as the base URL
+  try {
+    throw new Error;
+  } catch (err) {
+    var matches = ('' + err.stack).match(/(https?|file|ftp):\/\/[^\)\n]+/g);
+    if (matches) {
+      return getBaseURL(matches[0]);
+    }
+  }
+
+  return '/';
+}
+
+function getBaseURL(url) {
+  return ('' + url).replace(/^((?:https?|file|ftp):\/\/.+)\/[^\/]+$/, '$1') + '/';
+}
+
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+
+},{}],5:[function(require,module,exports) {
+var bundle = require('./bundle-url');
+
+function updateLink(link) {
+  var newLink = link.cloneNode();
+  newLink.onload = function () {
+    link.remove();
+  };
+  newLink.href = link.href.split('?')[0] + '?' + Date.now();
+  link.parentNode.insertBefore(newLink, link.nextSibling);
+}
+
+var cssTimeout = null;
+function reloadCSS() {
+  if (cssTimeout) {
+    return;
+  }
+
+  cssTimeout = setTimeout(function () {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+    for (var i = 0; i < links.length; i++) {
+      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
+        updateLink(links[i]);
+      }
+    }
+
+    cssTimeout = null;
+  }, 50);
+};
+
+module.exports = reloadCSS;
+
+},{"./bundle-url":7}],3:[function(require,module,exports) {
+
+        var reloadCSS = require('_css_loader');
+        module.hot.dispose(reloadCSS);
+        module.hot.accept(reloadCSS);
+      
+},{"_css_loader":5,"./../img/spr_vm.png":["77d41771f2679ae5c0665c9607e4c11a.png",6]}],14:[function(require,module,exports) {
 /*
 object-assign
 (c) Sindre Sorhus
@@ -157,7 +226,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],25:[function(require,module,exports) {
+},{}],17:[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -175,7 +244,7 @@ if ("development" !== 'production') {
 }
 
 module.exports = emptyObject;
-},{}],19:[function(require,module,exports) {
+},{}],18:[function(require,module,exports) {
 "use strict";
 
 /**
@@ -212,7 +281,7 @@ emptyFunction.thatReturnsArgument = function (arg) {
 };
 
 module.exports = emptyFunction;
-},{}],13:[function(require,module,exports) {
+},{}],10:[function(require,module,exports) {
 /** @license React v16.2.0
  * react.production.min.js
  *
@@ -235,7 +304,7 @@ var U={Children:{map:function(a,b,e){if(null==a)return a;var c=[];T(a,c,null,b,e
 d=a.key,g=a.ref,k=a._owner;if(null!=b){void 0!==b.ref&&(g=b.ref,k=G.current);void 0!==b.key&&(d=""+b.key);if(a.type&&a.type.defaultProps)var f=a.type.defaultProps;for(h in b)H.call(b,h)&&!I.hasOwnProperty(h)&&(c[h]=void 0===b[h]&&void 0!==f?f[h]:b[h])}var h=arguments.length-2;if(1===h)c.children=e;else if(1<h){f=Array(h);for(var l=0;l<h;l++)f[l]=arguments[l+2];c.children=f}return{$$typeof:r,type:a.type,key:d,ref:g,props:c,_owner:k}},createFactory:function(a){var b=J.bind(null,a);b.type=a;return b},
 isValidElement:K,version:"16.2.0",__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentOwner:G,assign:m}},V=Object.freeze({default:U}),W=V&&U||V;module.exports=W["default"]?W["default"]:W;
 
-},{"object-assign":15,"fbjs/lib/emptyObject":25,"fbjs/lib/emptyFunction":19}],17:[function(require,module,exports) {
+},{"object-assign":14,"fbjs/lib/emptyObject":17,"fbjs/lib/emptyFunction":18}],16:[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -249,7 +318,61 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],26:[function(require,module,exports) {
+},{}],20:[function(require,module,exports) {
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+'use strict';
+
+/**
+ * Use invariant() to assert state which your program assumes to be true.
+ *
+ * Provide sprintf-style format (only %s is supported) and arguments
+ * to provide information about what broke and what you were
+ * expecting.
+ *
+ * The invariant message will be stripped in production, but the invariant
+ * will remain to ensure logic does not differ in production.
+ */
+
+var validateFormat = function validateFormat(format) {};
+
+if ("development" !== 'production') {
+  validateFormat = function validateFormat(format) {
+    if (format === undefined) {
+      throw new Error('invariant requires an error message argument');
+    }
+  };
+}
+
+function invariant(condition, format, a, b, c, d, e, f) {
+  validateFormat(format);
+
+  if (!condition) {
+    var error;
+    if (format === undefined) {
+      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+    } else {
+      var args = [a, b, c, d, e, f];
+      var argIndex = 0;
+      error = new Error(format.replace(/%s/g, function () {
+        return args[argIndex++];
+      }));
+      error.name = 'Invariant Violation';
+    }
+
+    error.framesToPop = 1; // we don't care about invariant's own frame
+    throw error;
+  }
+}
+
+module.exports = invariant;
+},{}],19:[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -312,61 +435,7 @@ if ("development" !== 'production') {
 }
 
 module.exports = warning;
-},{"./emptyFunction":19}],27:[function(require,module,exports) {
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-'use strict';
-
-/**
- * Use invariant() to assert state which your program assumes to be true.
- *
- * Provide sprintf-style format (only %s is supported) and arguments
- * to provide information about what broke and what you were
- * expecting.
- *
- * The invariant message will be stripped in production, but the invariant
- * will remain to ensure logic does not differ in production.
- */
-
-var validateFormat = function validateFormat(format) {};
-
-if ("development" !== 'production') {
-  validateFormat = function validateFormat(format) {
-    if (format === undefined) {
-      throw new Error('invariant requires an error message argument');
-    }
-  };
-}
-
-function invariant(condition, format, a, b, c, d, e, f) {
-  validateFormat(format);
-
-  if (!condition) {
-    var error;
-    if (format === undefined) {
-      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
-    } else {
-      var args = [a, b, c, d, e, f];
-      var argIndex = 0;
-      error = new Error(format.replace(/%s/g, function () {
-        return args[argIndex++];
-      }));
-      error.name = 'Invariant Violation';
-    }
-
-    error.framesToPop = 1; // we don't care about invariant's own frame
-    throw error;
-  }
-}
-
-module.exports = invariant;
-},{}],16:[function(require,module,exports) {
+},{"./emptyFunction":18}],15:[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -426,7 +495,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 }
 
 module.exports = checkPropTypes;
-},{"./lib/ReactPropTypesSecret":17,"fbjs/lib/warning":26,"fbjs/lib/invariant":27}],14:[function(require,module,exports) {
+},{"./lib/ReactPropTypesSecret":16,"fbjs/lib/invariant":20,"fbjs/lib/warning":19}],11:[function(require,module,exports) {
 /** @license React v16.2.0
  * react.development.js
  *
@@ -1778,7 +1847,7 @@ if ("development" !== "production") {
     module.exports = react;
   })();
 }
-},{"object-assign":15,"prop-types/checkPropTypes":16,"fbjs/lib/emptyObject":25,"fbjs/lib/emptyFunction":19,"fbjs/lib/warning":26,"fbjs/lib/invariant":27}],10:[function(require,module,exports) {
+},{"object-assign":14,"prop-types/checkPropTypes":15,"fbjs/lib/emptyObject":17,"fbjs/lib/warning":19,"fbjs/lib/invariant":20,"fbjs/lib/emptyFunction":18}],8:[function(require,module,exports) {
 'use strict';
 
 if ("development" === 'production') {
@@ -1786,7 +1855,7 @@ if ("development" === 'production') {
 } else {
   module.exports = require('./cjs/react.development.js');
 }
-},{"./cjs/react.production.min.js":13,"./cjs/react.development.js":14}],18:[function(require,module,exports) {
+},{"./cjs/react.production.min.js":10,"./cjs/react.development.js":11}],21:[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -1820,7 +1889,7 @@ var ExecutionEnvironment = {
 };
 
 module.exports = ExecutionEnvironment;
-},{}],20:[function(require,module,exports) {
+},{}],22:[function(require,module,exports) {
 'use strict';
 
 /**
@@ -1895,7 +1964,44 @@ var EventListener = {
 };
 
 module.exports = EventListener;
-},{"./emptyFunction":19}],21:[function(require,module,exports) {
+},{"./emptyFunction":18}],23:[function(require,module,exports) {
+'use strict';
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @typechecks
+ */
+
+/* eslint-disable fb-www/typeof-undefined */
+
+/**
+ * Same as document.activeElement but wraps in a try-catch block. In IE it is
+ * not safe to call document.activeElement if there is nothing focused.
+ *
+ * The activeElement will be null only if the document or document body is not
+ * yet defined.
+ *
+ * @param {?DOMDocument} doc Defaults to current document.
+ * @return {?DOMElement}
+ */
+function getActiveElement(doc) /*?DOMElement*/{
+  doc = doc || (typeof document !== 'undefined' ? document : undefined);
+  if (typeof doc === 'undefined') {
+    return null;
+  }
+  try {
+    return doc.activeElement || doc.body;
+  } catch (e) {
+    return doc.body;
+  }
+}
+
+module.exports = getActiveElement;
+},{}],24:[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -1961,7 +2067,7 @@ function shallowEqual(objA, objB) {
 }
 
 module.exports = shallowEqual;
-},{}],33:[function(require,module,exports) {
+},{}],32:[function(require,module,exports) {
 'use strict';
 
 /**
@@ -1984,7 +2090,7 @@ function isNode(object) {
 }
 
 module.exports = isNode;
-},{}],30:[function(require,module,exports) {
+},{}],29:[function(require,module,exports) {
 'use strict';
 
 /**
@@ -2007,7 +2113,7 @@ function isTextNode(object) {
 }
 
 module.exports = isTextNode;
-},{"./isNode":33}],22:[function(require,module,exports) {
+},{"./isNode":32}],25:[function(require,module,exports) {
 'use strict';
 
 /**
@@ -2045,44 +2151,7 @@ function containsNode(outerNode, innerNode) {
 }
 
 module.exports = containsNode;
-},{"./isTextNode":30}],23:[function(require,module,exports) {
-'use strict';
-
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @typechecks
- */
-
-/* eslint-disable fb-www/typeof-undefined */
-
-/**
- * Same as document.activeElement but wraps in a try-catch block. In IE it is
- * not safe to call document.activeElement if there is nothing focused.
- *
- * The activeElement will be null only if the document or document body is not
- * yet defined.
- *
- * @param {?DOMDocument} doc Defaults to current document.
- * @return {?DOMElement}
- */
-function getActiveElement(doc) /*?DOMElement*/{
-  doc = doc || (typeof document !== 'undefined' ? document : undefined);
-  if (typeof doc === 'undefined') {
-    return null;
-  }
-  try {
-    return doc.activeElement || doc.body;
-  } catch (e) {
-    return doc.body;
-  }
-}
-
-module.exports = getActiveElement;
-},{}],24:[function(require,module,exports) {
+},{"./isTextNode":29}],26:[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -2107,7 +2176,7 @@ function focusNode(node) {
 }
 
 module.exports = focusNode;
-},{}],11:[function(require,module,exports) {
+},{}],12:[function(require,module,exports) {
 /** @license React v16.2.0
  * react-dom.production.min.js
  *
@@ -2338,7 +2407,7 @@ var Sg={createPortal:Qg,findDOMNode:function(a){if(null==a)return null;if(1===a.
 E("40");return a._reactRootContainer?(Z.unbatchedUpdates(function(){Pg(null,null,a,!1,function(){a._reactRootContainer=null})}),!0):!1},unstable_createPortal:Qg,unstable_batchedUpdates:tc,unstable_deferredUpdates:Z.deferredUpdates,flushSync:Z.flushSync,__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{EventPluginHub:mb,EventPluginRegistry:Va,EventPropagators:Cb,ReactControlledComponent:qc,ReactDOMComponentTree:sb,ReactDOMEventListener:xd}};
 Z.injectIntoDevTools({findFiberByHostInstance:pb,bundleType:0,version:"16.2.0",rendererPackageName:"react-dom"});var Tg=Object.freeze({default:Sg}),Ug=Tg&&Sg||Tg;module.exports=Ug["default"]?Ug["default"]:Ug;
 
-},{"react":10,"object-assign":15,"fbjs/lib/ExecutionEnvironment":18,"fbjs/lib/emptyFunction":19,"fbjs/lib/EventListener":20,"fbjs/lib/shallowEqual":21,"fbjs/lib/containsNode":22,"fbjs/lib/getActiveElement":23,"fbjs/lib/focusNode":24,"fbjs/lib/emptyObject":25}],32:[function(require,module,exports) {
+},{"react":8,"object-assign":14,"fbjs/lib/ExecutionEnvironment":21,"fbjs/lib/EventListener":22,"fbjs/lib/emptyFunction":18,"fbjs/lib/getActiveElement":23,"fbjs/lib/shallowEqual":24,"fbjs/lib/emptyObject":17,"fbjs/lib/containsNode":25,"fbjs/lib/focusNode":26}],30:[function(require,module,exports) {
 'use strict';
 
 /**
@@ -2369,7 +2438,7 @@ function hyphenate(string) {
 }
 
 module.exports = hyphenate;
-},{}],28:[function(require,module,exports) {
+},{}],27:[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -2406,7 +2475,7 @@ function hyphenateStyleName(string) {
 }
 
 module.exports = hyphenateStyleName;
-},{"./hyphenate":32}],31:[function(require,module,exports) {
+},{"./hyphenate":30}],31:[function(require,module,exports) {
 "use strict";
 
 /**
@@ -2436,7 +2505,7 @@ function camelize(string) {
 }
 
 module.exports = camelize;
-},{}],29:[function(require,module,exports) {
+},{}],28:[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -2474,7 +2543,7 @@ function camelizeStyleName(string) {
 }
 
 module.exports = camelizeStyleName;
-},{"./camelize":31}],12:[function(require,module,exports) {
+},{"./camelize":31}],13:[function(require,module,exports) {
 /** @license React v16.2.0
  * react-dom.development.js
  *
@@ -17832,7 +17901,7 @@ if ("development" !== "production") {
     module.exports = reactDom;
   })();
 }
-},{"react":10,"object-assign":15,"prop-types/checkPropTypes":16,"fbjs/lib/warning":26,"fbjs/lib/invariant":27,"fbjs/lib/ExecutionEnvironment":18,"fbjs/lib/emptyFunction":19,"fbjs/lib/getActiveElement":23,"fbjs/lib/containsNode":22,"fbjs/lib/EventListener":20,"fbjs/lib/shallowEqual":21,"fbjs/lib/focusNode":24,"fbjs/lib/hyphenateStyleName":28,"fbjs/lib/emptyObject":25,"fbjs/lib/camelizeStyleName":29}],9:[function(require,module,exports) {
+},{"react":8,"object-assign":14,"prop-types/checkPropTypes":15,"fbjs/lib/invariant":20,"fbjs/lib/warning":19,"fbjs/lib/EventListener":22,"fbjs/lib/ExecutionEnvironment":21,"fbjs/lib/emptyFunction":18,"fbjs/lib/containsNode":25,"fbjs/lib/getActiveElement":23,"fbjs/lib/emptyObject":17,"fbjs/lib/focusNode":26,"fbjs/lib/shallowEqual":24,"fbjs/lib/hyphenateStyleName":27,"fbjs/lib/camelizeStyleName":28}],9:[function(require,module,exports) {
 'use strict';
 
 function checkDCE() {
@@ -17868,76 +17937,7 @@ if ("development" === 'production') {
 } else {
   module.exports = require('./cjs/react-dom.development.js');
 }
-},{"./cjs/react-dom.production.min.js":11,"./cjs/react-dom.development.js":12}],8:[function(require,module,exports) {
-var bundleURL = null;
-function getBundleURLCached() {
-  if (!bundleURL) {
-    bundleURL = getBundleURL();
-  }
-
-  return bundleURL;
-}
-
-function getBundleURL() {
-  // Attempt to find the URL of the current script and use that as the base URL
-  try {
-    throw new Error;
-  } catch (err) {
-    var matches = ('' + err.stack).match(/(https?|file|ftp):\/\/[^\)\n]+/g);
-    if (matches) {
-      return getBaseURL(matches[0]);
-    }
-  }
-
-  return '/';
-}
-
-function getBaseURL(url) {
-  return ('' + url).replace(/^((?:https?|file|ftp):\/\/.+)\/[^\/]+$/, '$1') + '/';
-}
-
-exports.getBundleURL = getBundleURLCached;
-exports.getBaseURL = getBaseURL;
-
-},{}],6:[function(require,module,exports) {
-var bundle = require('./bundle-url');
-
-function updateLink(link) {
-  var newLink = link.cloneNode();
-  newLink.onload = function () {
-    link.remove();
-  };
-  newLink.href = link.href.split('?')[0] + '?' + Date.now();
-  link.parentNode.insertBefore(newLink, link.nextSibling);
-}
-
-var cssTimeout = null;
-function reloadCSS() {
-  if (cssTimeout) {
-    return;
-  }
-
-  cssTimeout = setTimeout(function () {
-    var links = document.querySelectorAll('link[rel="stylesheet"]');
-    for (var i = 0; i < links.length; i++) {
-      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
-        updateLink(links[i]);
-      }
-    }
-
-    cssTimeout = null;
-  }, 50);
-};
-
-module.exports = reloadCSS;
-
-},{"./bundle-url":8}],5:[function(require,module,exports) {
-
-        var reloadCSS = require('_css_loader');
-        module.hot.dispose(reloadCSS);
-        module.hot.accept(reloadCSS);
-      
-},{"_css_loader":6,"./../img/spr_vm.png":["77d41771f2679ae5c0665c9607e4c11a.png",7]}],35:[function(require,module,exports) {
+},{"./cjs/react-dom.production.min.js":12,"./cjs/react-dom.development.js":13}],33:[function(require,module,exports) {
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -17955,144 +17955,242 @@ var BeverageItems = /** @class */ (function (_super) {
     __extends(BeverageItems, _super);
     function BeverageItems(props) {
         var _this = _super.call(this, props) || this;
-        _this.beveragItem = [
-            { name: '펩시', value: 300 },
-            { name: 'v10', value: 200 },
-            { name: '칸타타', value: 700 },
-            { name: '2%', value: 500 },
-            { name: '환타', value: 800 },
-            { name: '식혜', value: 100 },
-            { name: '비타500', value: 400 },
-            { name: '박카스', value: 600 },
+        _this.beverageList = [
+            { name: '식혜', value: 100, className: 'item6' },
+            { name: 'v10', value: 200, className: 'item2' },
+            { name: '펩시', value: 300, className: 'item1' },
+            { name: '비타500', value: 400, className: 'item7' },
+            { name: '2%', value: 500, className: 'item4' },
+            { name: '박카스', value: 600, className: 'item8' },
+            { name: '칸타타', value: 700, className: 'item3' },
+            { name: '환타', value: 800, className: 'item5' }
         ];
         return _this;
     }
     BeverageItems.prototype.randomSort = function () {
+        return this.beverageList.sort(function () { return Math.random() - 0.5; });
     };
     BeverageItems.prototype.render = function () {
-        return (React.createElement("ul", null,
-            React.createElement("li", { className: "item1" },
+        return (React.createElement("ul", null, this.randomSort().map(function (item, index) {
+            return React.createElement("li", { className: item.className, key: index },
                 React.createElement("button", null,
-                    React.createElement("span", { className: "blind" }, "\uD3A9\uC2DC")),
-                React.createElement("span", null, "300\uC6D0")),
-            React.createElement("li", { className: "item2" },
-                React.createElement("button", null,
-                    React.createElement("span", { className: "blind" }, "V10")),
-                React.createElement("span", null, "200\uC6D0")),
-            React.createElement("li", { className: "item3" },
-                React.createElement("button", null,
-                    React.createElement("span", { className: "blind" }, "\uCE78\uD0C0\uD0C0")),
-                React.createElement("span", null, "700\uC6D0")),
-            React.createElement("li", { className: "item4" },
-                React.createElement("button", null,
-                    React.createElement("span", { className: "blind" }, "2%")),
-                React.createElement("span", null, "500\uC6D0")),
-            React.createElement("li", { className: "item5" },
-                React.createElement("button", null,
-                    React.createElement("span", { className: "blind" }, "\uD658\uD0C0")),
-                React.createElement("span", null, "800\uC6D0")),
-            React.createElement("li", { className: "item6" },
-                React.createElement("button", null,
-                    React.createElement("span", { className: "blind" }, "\uC2DD\uD61C")),
-                React.createElement("span", null, "100\uC6D0")),
-            React.createElement("li", { className: "item7" },
-                React.createElement("button", null,
-                    React.createElement("span", { className: "blind" }, "\uBE44\uD0C0500")),
-                React.createElement("span", null, "400\uC6D0")),
-            React.createElement("li", { className: "item8" },
-                React.createElement("button", null,
-                    React.createElement("span", { className: "blind" }, "\uBC15\uCE74\uC2A4")),
-                React.createElement("span", null, "600\uC6D0"))));
+                    React.createElement("span", { className: "blind" }, item.name)),
+                React.createElement("span", null,
+                    item.value,
+                    "\uC6D0"));
+        })));
     };
     return BeverageItems;
 }(React.Component));
 exports.default = BeverageItems;
 
-},{"react":10}],4:[function(require,module,exports) {
+},{"react":8}],35:[function(require,module,exports) {
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
-var ReactDOM = require("react-dom");
-require("./css/machine.css");
-var BeverageItem_1 = require("./components/BeverageItem");
-ReactDOM.render(React.createElement("div", { id: "wrap" },
-    React.createElement("div", { id: "header" },
-        React.createElement("h1", null, "Vending Machine")),
-    React.createElement("div", { id: "container" },
-        React.createElement("div", { id: "content" },
-            React.createElement("div", { className: "machine" },
-                React.createElement("div", { className: "product_area", id: "_product_area" },
-                    React.createElement("h2", { className: "blind" }, "\uC0C1\uD488\uC120\uD0DD"),
-                    React.createElement(BeverageItem_1.default, null)),
-                React.createElement("div", { className: "pay_area" },
-                    React.createElement("h2", { className: "blind" }, "\uAE08\uC804\uD22C\uC785"),
-                    React.createElement("div", { className: "insert_area", id: "_insert_area" },
-                        React.createElement("h3", null, "\uD22C\uC785\uAD6C"),
-                        React.createElement("div", { className: "insert" },
-                            React.createElement("span", null, "0"),
-                            "\uC6D0"),
-                        React.createElement("div", { className: "insert_papermoney _drop_able" },
-                            React.createElement("span", { className: "blind" }, "\uC9C0\uD3D0\uD22C\uC785")),
-                        React.createElement("div", { className: "insert_coin _drop_able" },
-                            React.createElement("span", { className: "blind" }, "\uB3D9\uC804\uD22C\uC785")),
-                        React.createElement("div", { className: "return_money" },
-                            React.createElement("span", { className: "blind" }, "\uBC18\uD658\uAD6C")),
-                        React.createElement("button", { id: "_btn_money_return" },
-                            React.createElement("span", { className: "blind" }, "\uBC18\uD658\uBC84\uD2BC"))),
-                    React.createElement("div", { className: "wallet", id: "_wallet" },
-                        React.createElement("h3", null, "\uB0B4 \uC8FC\uBA38\uB2C8"),
-                        React.createElement("ul", null,
-                            React.createElement("li", null,
-                                React.createElement("div", { className: "w50 _drag_able" },
-                                    React.createElement("span", { className: "blind" }, "50\uC6D0"))),
-                            React.createElement("li", null,
-                                React.createElement("div", { className: "w100 _drag_able" },
-                                    React.createElement("span", { className: "blind" }, "100\uC6D0"))),
-                            React.createElement("li", null,
-                                React.createElement("div", { className: "w500 _drag_able" },
-                                    React.createElement("span", { className: "blind" }, "500\uC6D0"))),
-                            React.createElement("li", null,
-                                React.createElement("div", { className: "w1000 _drag_able" },
-                                    React.createElement("span", { className: "blind" }, "1,000\uC6D0")))),
-                        React.createElement("p", { className: "my_money" },
-                            "\uC9C0\uAE08 \uB0B4 \uB3C8: ",
-                            React.createElement("span", null, "10,000"),
-                            "\uC6D0"))),
-                React.createElement("div", { className: "console_area", id: "_console_area" },
-                    React.createElement("h2", { className: "blind" }, "\uCF58\uC194")))),
-        React.createElement("div", { className: "aside" },
-            React.createElement("h2", null, "\uC790\uBC14\uC2A4\uD06C\uB9BD\uD2B8\uB97C \uC774\uC6A9\uD55C \uAC00\uC0C1\uC758 \uC790\uB3D9\uD310\uB9E4\uAE30 \uAD6C\uD604 "),
-            React.createElement("h3", null, "\uC0C1\uD488\uC804\uC2DC \uC601\uC5ED"),
-            React.createElement("p", null, "\uC0C1\uD488\uC774 \uC804\uC2DC\uB418\uACE0, \uC0AC\uC6A9\uC790\uAC00 \uC0C1\uD488\uC744 \uD074\uB9AD\uD558\uC5EC \uBB3C\uAC74\uC744 \uAD6C\uB9E4\uD558\uB294 \uC601\uC5ED\uC785\uB2C8\uB2E4."),
-            React.createElement("ol", null,
-                React.createElement("li", null, "\uC0C1\uD488\uC740 \uD398\uC774\uC9C0\uAC00 \uB85C\uB4DC \uB420 \uB54C 8\uC885\uC774 \uB79C\uB364\uC73C\uB85C \uC9C4\uC5F4\uB429\uB2C8\uB2E4. \uC774 \uC9C4\uC5F4\uC740 \u2018\uC0C8\uB85C \uACE0\uCE68\u2019 \uD560 \uB54C\uB9C8\uB2E4 \uB79C\uB354\uBBF9 \uD558\uAC8C \uBFCC\uB9BD\uB2C8\uB2E4."),
-                React.createElement("li", null, "\uAC19\uC740 \uC0C1\uD488\uC744 \uC911\uBCF5\uD558\uC5EC \uC9C4\uC5F4\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4."),
-                React.createElement("li", null, "\uC0C1\uD488\uC758 \uAC00\uACA9\uC740 100\uC6D0\uBD80\uD130 800\uC6D0 \uAE4C\uC9C0 \uBAA8\uB450 \uB2E4\uB985\uB2C8\uB2E4."),
-                React.createElement("li", null, "\uC0C1\uD488\uC758 \uC0AC\uC9C4 \uB610\uB294 \uAC00\uACA9\uC744 \uD074\uB9AD\uD558\uBA74 \uAD6C\uB9E4\uD558\uB294 \uAC83\uC73C\uB85C \uD569\uB2C8\uB2E4."),
-                React.createElement("li", null, "\uD654\uBA74\uC5D0\uB294 \uBCF4\uC774\uC9C0 \uC54A\uC9C0\uB9CC \uC0C1\uD488\uC5D0\uB294 \uC7AC\uACE0(\uC218\uB7C9)\uC774 \uC788\uC2B5\uB2C8\uB2E4. \uC218\uB7C9\uC740 \uAC01\uC790 \uC815\uD558\uACE0, \uADF8 \uC218\uB7C9\uC774 \uBAA8\uB450 \uC18C\uC9C4(\uD488\uC808) \uB418\uC5C8\uC744 \uB54C\uC5D0\uB294 \uC0C1\uD488\uC744 \uAD6C\uB9E4\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. \u2018\uD488\uC808 \uB418\uC5C8\uB2E4\u2019\uB294 \uC0C1\uD669\uC744 \uC5B4\uB5A4 \uBC29\uC2DD\uC73C\uB85C \uBB18\uC0AC\uD558\uBA74 \uC88B\uC744\uC9C0\uB294 \uBCF8\uC778\uC774 \uD310\uB2E8\uD558\uC5EC \uB9CC\uB4E4\uC5B4\uC8FC\uC138\uC694. \uC0AC\uC6A9\uC790\uAC00 \uC778\uC9C0 \uD560 \uC815\uB3C4\uBA74 \uB429\uB2C8\uB2E4."),
-                React.createElement("li", null, "\uC7AC\uACE0 \uB610\uD55C \uD398\uC774\uC9C0\uB97C \u2018\uC0C8\uB85C \uACE0\uCE68\u2019 \uD560 \uB54C\uB9C8\uB2E4 \uB79C\uB354\uBBF9 \uD558\uAC8C \uBCC0\uD569\uB2C8\uB2E4. (\uCD5C\uC18C\uC218\uB7C9 1\uAC1C, \uCD5C\uB300 \uC218\uB7C93\uAC1C)")),
-            React.createElement("h3", null, "\uAE08\uC804 \uD22C\uC785 \uC601\uC5ED"),
-            React.createElement("p", null, "\uC0C1\uD488\uC744 \uAD6C\uB9E4\uD558\uAE30 \uC704\uD574 \uB3D9\uC804\uC774\uB098 \uC9C0\uD3D0\uB97C \uD22C\uC785\uD558\uBA70 \uBB3C\uAC74\uC744 \uAD6C\uB9E4\uD558\uBA74 \uCDA9\uC804\uD55C \uB3C8\uC744 \uC0AD\uAC10\uD558\uB294 \uAE30\uB2A5\uC744 \uD558\uB294 \uC601\uC5ED\uC785\uB2C8\uB2E4."),
-            React.createElement("ol", null,
-                React.createElement("li", null, "\uC88C\uCE21 \uB05D\uC5D0\uB294 \uB3D9\uC804/\uC9C0\uD3D0 \uD22C\uC785\uAD6C, \uC6B0\uCE21\uC5D0\uB294 \uC9C0\uD3D0\uC640 \uB3D9\uC804\uC774 \uC790\uB9AC\uD558\uAC8C \uB429\uB2C8\uB2E4."),
-                React.createElement("li", null, "\uB0B4 \uC8FC\uBA38\uB2C8\uC5D0 \uB4E4\uC5B4\uC788\uB294 \uB3C8\uC740 10,000\uC6D0 \uC785\uB2C8\uB2E4. \uC8FC\uBA38\uB2C8 \uC548\uC758 \uB3C8\uC740 \uB3D9\uC804\uACFC \uC9C0\uD3D0\uC758 \uAD6C\uBD84\uC774 \uC5C6\uC2B5\uB2C8\uB2E4. \uAEBC\uB0B4\uB294 \uB300\uB85C(\uC6B0\uCE21\uC758 \uB3D9\uC804 \uB610\uB294 \uC9C0\uD3D0 \uBC84\uD2BC\uC744 \uD074\uB9AD\uD574\uC11C \uB4DC\uB798\uADF8 \uD558\uB294 \uAC83\uC744 \u2018\uAEBC\uB0B8\uB2E4\u2019 \uB77C\uACE0 \uD45C\uD604\uD569\uB2C8\uB2E4) \uC9C0\uD3D0\uAC00 \uB418\uAE30\uB3C4, \uB3D9\uC804\uC774 \uB418\uAE30\uB3C4 \uD569\uB2C8\uB2E4. "),
-                React.createElement("li", null, "\uC6B0\uCE21\uC758 \uC9C0\uD3D0 \uB610\uB294 \uB3D9\uC804\uC744 \uB4DC\uB798\uADF8\uD574\uC11C, \uC88C\uCE21 \uD22C\uC785\uAD6C\uC5D0 \uB4DC\uB86D \uD558\uBA74 \uB3C8\uC744 \uB123\uC740 \uAC83\uC774 \uB429\uB2C8\uB2E4."),
-                React.createElement("li", null, "\uB3C8\uC744 \uB123\uC73C\uBA74, \uD22C\uC785\uAD6C\uC5D0 \uD604\uC7AC \uC5BC\uB9C8\uAC00 \uB4E4\uC5B4\uAC14\uB294\uC9C0 \uD45C\uC2DC\uB429\uB2C8\uB2E4. \uC790\uD310\uAE30\uAC00 \uAD6C\uC2DD\uC774\uB77C 3,000\uC6D0 \uC774\uC0C1 \uB4E4\uC5B4\uAC00\uC9C0 \uC54A\uC73C\uBA70, \uC9C0\uD3D0\uB294 2\uC7A5 \uC774\uC0C1 \uB4E4\uC5B4\uAC00\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uB3D9\uC804\uC740 \uD22C\uC785 \uC81C\uD55C\uC774 \uC5C6\uC2B5\uB2C8\uB2E4."),
-                React.createElement("li", null, "\uB3C8\uC744 \uB4DC\uB798\uADF8\uD574\uC11C \uD22C\uC785\uAD6C\uC5D0 \uB4DC\uB86D \uD574\uC57C \uD558\uB294\uB370, \uC2E4\uC218\uB85C \uD22C\uC785\uAD6C \uBC14\uAE65 \uC601\uC5ED\uC5D0 \uB4DC\uB86D \uD558\uB294 \uACBD\uC6B0 \uD22C\uC785\uAD6C\uC5D0 \uB3C8\uC774 \uC62C\uB77C\uAC00\uC9C0 \uC54A\uACE0 \uB0B4 \uC8FC\uBA38\uB2C8\uC5D0\uC11C\uB3C4 \uADF8\uB9CC\uD07C \uAE4E\uC774\uAC8C \uB429\uB2C8\uB2E4. \uB3C8\uC744 \uB5A8\uC5B4\uB728\uB9B0 \uAC83\uC785\uB2C8\uB2E4. \uB2E4\uC2DC \uC8FC\uC6B8 \uC218\uB294 \uC5C6\uC2B5\uB2C8\uB2E4."),
-                React.createElement("li", null, "\uC0C1\uD488\uC744 \uAD6C\uB9E4\uD55C \uACBD\uC6B0 \uD22C\uC785\uAD6C\uC758 \uAE08\uC561 \uD45C\uC2DC\uAC00 \uCC28\uAC10\uB41C \uAE08\uC561\uC73C\uB85C \uBC14\uB00C\uC5B4 \uD45C\uC2DC \uB418\uC5B4\uC57C \uD569\uB2C8\uB2E4."),
-                React.createElement("li", null, "\uBC18\uD658 \uBC84\uD2BC\uC744 \uB204\uB974\uBA74 \uD22C\uC785\uAD6C\uC5D0 \uD45C\uC2DC\uB41C \uAE08\uC561\uC774 \uB0B4 \uC8FC\uBA38\uB2C8\uB85C \uBC18\uD658\uB429\uB2C8\uB2E4.")),
-            React.createElement("h3", null, "\uCF58\uC194 \uC601\uC5ED"),
-            React.createElement("p", null, "\uBAA8\uB4E0 \uD589\uB3D9\uC5D0 \uB300\uD55C \uBA54\uC2DC\uC9C0\uB97C \uCD9C\uB825\uD558\uB294 \uC601\uC5ED\uC785\uB2C8\uB2E4."),
-            React.createElement("ol", null,
-                React.createElement("li", null, "\uC0C1\uD488 \uC804\uC2DC \uC601\uC5ED\uACFC \uAE08\uC804 \uD22C\uC785 \uC601\uC5ED\uC5D0\uC11C \uC77C\uC5B4\uB098\uB294 \uBAA8\uB4E0 \uD589\uB3D9\uC5D0 \uB300\uD55C \uBA54\uC2DC\uC9C0\uB97C \uCD9C\uB825\uD569\uB2C8\uB2E4."),
-                React.createElement("li", null, "\uCF58\uC194 \uB0B4\uC6A9\uC740 \uC2A4\uD06C\uB864\uC774 \uAC00\uB2A5\uD558\uB3C4\uB85D \uD569\uB2C8\uB2E4."),
-                React.createElement("li", null, "\uC2A4\uD06C\uB864\uC740 \uD56D\uC0C1 \uCD5C\uC2E0 \uC815\uBCF4 \uCD5C \uD558\uB2E8\uC5D0 \uC704\uCE58(\uC720\uC9C0)\uD558\uC5EC \uCD5C\uC2E0 \uC815\uBCF4\uB97C \uBCFC \uC218 \uC788\uB3C4\uB85D \uD574\uC57C \uD569\uB2C8\uB2E4."))),
-        React.createElement("div", { id: "dragging_layer" })),
-    React.createElement("div", { id: "footer" },
-        React.createElement("address", null,
-            React.createElement("strong", null, "Vending Machine")))), document.getElementById("root"));
+var Footer = /** @class */ (function (_super) {
+    __extends(Footer, _super);
+    function Footer(props) {
+        var _this = _super.call(this, props) || this;
+        _this.title = 'Vending Machine';
+        return _this;
+    }
+    Footer.prototype.render = function () {
+        return (React.createElement("div", { id: "footer" },
+            React.createElement("address", null,
+                React.createElement("strong", null, "Vending Machine"))));
+    };
+    return Footer;
+}(React.Component));
+exports.default = Footer;
 
-},{"react":10,"react-dom":9,"./css/machine.css":5,"./components/BeverageItem":35}],0:[function(require,module,exports) {
+},{"react":8}],34:[function(require,module,exports) {
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = require("react");
+var Header = /** @class */ (function (_super) {
+    __extends(Header, _super);
+    function Header(props) {
+        var _this = _super.call(this, props) || this;
+        _this.title = 'Vending Machine';
+        return _this;
+    }
+    Header.prototype.render = function () {
+        return (React.createElement("div", { id: "header" },
+            React.createElement("h1", null, this.title)));
+    };
+    return Header;
+}(React.Component));
+exports.default = Header;
+
+},{"react":8}],37:[function(require,module,exports) {
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = require("react");
+var Wallet = /** @class */ (function (_super) {
+    __extends(Wallet, _super);
+    function Wallet(props) {
+        var _this = _super.call(this, props) || this;
+        _this.coins = [
+            { className: 'w50', value: 50 },
+            { className: 'w100', value: 100 },
+            { className: 'w500', value: 500 },
+            { className: 'w1000', value: 1000 }
+        ];
+        _this.state = { currentMoney: 10000 };
+        return _this;
+    }
+    Wallet.prototype.decreaseMoney = function (value) {
+        this.setState({ currentMoney: this.state.currentMoney - value });
+    };
+    Wallet.prototype.selectMoney = function (elTarget, value) {
+        this.decreaseMoney(value);
+    };
+    Wallet.prototype.render = function () {
+        var _this = this;
+        return (React.createElement("div", { className: "wallet", id: "_wallet" },
+            React.createElement("h3", null, "\uB0B4 \uC8FC\uBA38\uB2C8"),
+            React.createElement("ul", null, this.coins.map(function (coin, index) { return (React.createElement("li", null,
+                React.createElement("div", { className: coin.className + " _drag_able", onClick: function (e) {
+                        _this.selectMoney(e.currentTarget, coin.value);
+                    } },
+                    React.createElement("span", { className: "blind" },
+                        "$",
+                        coin.value,
+                        "\uC6D0")))); })),
+            React.createElement("p", { className: "my_money" },
+                "\uC9C0\uAE08 \uB0B4 \uB3C8: ",
+                React.createElement("span", null, this.state.currentMoney),
+                "\uC6D0")));
+    };
+    return Wallet;
+}(React.Component));
+exports.default = Wallet;
+
+},{"react":8}],36:[function(require,module,exports) {
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = require("react");
+var BeverageItem_1 = require("../../components/BeverageItem");
+var Footer_1 = require("../../components/footer/Footer");
+var Header_1 = require("../../components/header/Header");
+var Wallet_1 = require("../../components/wallet/Wallet");
+var Machine = /** @class */ (function (_super) {
+    __extends(Machine, _super);
+    function Machine(props) {
+        return _super.call(this, props) || this;
+    }
+    Machine.prototype.render = function () {
+        return (React.createElement("div", { id: "wrap" },
+            React.createElement(Header_1.default, null),
+            React.createElement("div", { id: "container" },
+                React.createElement("div", { id: "content" },
+                    React.createElement("div", { className: "machine" },
+                        React.createElement("div", { className: "product_area", id: "_product_area" },
+                            React.createElement("h2", { className: "blind" }, "\uC0C1\uD488\uC120\uD0DD"),
+                            React.createElement(BeverageItem_1.default, null)),
+                        React.createElement("div", { className: "pay_area" },
+                            React.createElement("h2", { className: "blind" }, "\uAE08\uC804\uD22C\uC785"),
+                            React.createElement("div", { className: "insert_area", id: "_insert_area" },
+                                React.createElement("h3", null, "\uD22C\uC785\uAD6C"),
+                                React.createElement("div", { className: "insert" },
+                                    React.createElement("span", null, "0"),
+                                    "\uC6D0"),
+                                React.createElement("div", { className: "insert_papermoney _drop_able" },
+                                    React.createElement("span", { className: "blind" }, "\uC9C0\uD3D0\uD22C\uC785")),
+                                React.createElement("div", { className: "insert_coin _drop_able" },
+                                    React.createElement("span", { className: "blind" }, "\uB3D9\uC804\uD22C\uC785")),
+                                React.createElement("div", { className: "return_money" },
+                                    React.createElement("span", { className: "blind" }, "\uBC18\uD658\uAD6C")),
+                                React.createElement("button", { id: "_btn_money_return" },
+                                    React.createElement("span", { className: "blind" }, "\uBC18\uD658\uBC84\uD2BC"))),
+                            React.createElement(Wallet_1.default, null)),
+                        React.createElement("div", { className: "console_area", id: "_console_area" },
+                            React.createElement("h2", { className: "blind" }, "\uCF58\uC194")))),
+                React.createElement("div", { className: "aside" },
+                    React.createElement("h2", null, "\uC790\uBC14\uC2A4\uD06C\uB9BD\uD2B8\uB97C \uC774\uC6A9\uD55C \uAC00\uC0C1\uC758 \uC790\uB3D9\uD310\uB9E4\uAE30 \uAD6C\uD604 "),
+                    React.createElement("h3", null, "\uC0C1\uD488\uC804\uC2DC \uC601\uC5ED"),
+                    React.createElement("p", null, "\uC0C1\uD488\uC774 \uC804\uC2DC\uB418\uACE0, \uC0AC\uC6A9\uC790\uAC00 \uC0C1\uD488\uC744 \uD074\uB9AD\uD558\uC5EC \uBB3C\uAC74\uC744 \uAD6C\uB9E4\uD558\uB294 \uC601\uC5ED\uC785\uB2C8\uB2E4."),
+                    React.createElement("ol", null,
+                        React.createElement("li", null, "\uC0C1\uD488\uC740 \uD398\uC774\uC9C0\uAC00 \uB85C\uB4DC \uB420 \uB54C 8\uC885\uC774 \uB79C\uB364\uC73C\uB85C \uC9C4\uC5F4\uB429\uB2C8\uB2E4. \uC774 \uC9C4\uC5F4\uC740 \u2018\uC0C8\uB85C \uACE0\uCE68\u2019 \uD560 \uB54C\uB9C8\uB2E4 \uB79C\uB354\uBBF9 \uD558\uAC8C \uBFCC\uB9BD\uB2C8\uB2E4."),
+                        React.createElement("li", null, "\uAC19\uC740 \uC0C1\uD488\uC744 \uC911\uBCF5\uD558\uC5EC \uC9C4\uC5F4\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4."),
+                        React.createElement("li", null, "\uC0C1\uD488\uC758 \uAC00\uACA9\uC740 100\uC6D0\uBD80\uD130 800\uC6D0 \uAE4C\uC9C0 \uBAA8\uB450 \uB2E4\uB985\uB2C8\uB2E4."),
+                        React.createElement("li", null, "\uC0C1\uD488\uC758 \uC0AC\uC9C4 \uB610\uB294 \uAC00\uACA9\uC744 \uD074\uB9AD\uD558\uBA74 \uAD6C\uB9E4\uD558\uB294 \uAC83\uC73C\uB85C \uD569\uB2C8\uB2E4."),
+                        React.createElement("li", null, "\uD654\uBA74\uC5D0\uB294 \uBCF4\uC774\uC9C0 \uC54A\uC9C0\uB9CC \uC0C1\uD488\uC5D0\uB294 \uC7AC\uACE0(\uC218\uB7C9)\uC774 \uC788\uC2B5\uB2C8\uB2E4. \uC218\uB7C9\uC740 \uAC01\uC790 \uC815\uD558\uACE0, \uADF8 \uC218\uB7C9\uC774 \uBAA8\uB450 \uC18C\uC9C4(\uD488\uC808) \uB418\uC5C8\uC744 \uB54C\uC5D0\uB294 \uC0C1\uD488\uC744 \uAD6C\uB9E4\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. \u2018\uD488\uC808 \uB418\uC5C8\uB2E4\u2019\uB294 \uC0C1\uD669\uC744 \uC5B4\uB5A4 \uBC29\uC2DD\uC73C\uB85C \uBB18\uC0AC\uD558\uBA74 \uC88B\uC744\uC9C0\uB294 \uBCF8\uC778\uC774 \uD310\uB2E8\uD558\uC5EC \uB9CC\uB4E4\uC5B4\uC8FC\uC138\uC694. \uC0AC\uC6A9\uC790\uAC00 \uC778\uC9C0 \uD560 \uC815\uB3C4\uBA74 \uB429\uB2C8\uB2E4."),
+                        React.createElement("li", null, "\uC7AC\uACE0 \uB610\uD55C \uD398\uC774\uC9C0\uB97C \u2018\uC0C8\uB85C \uACE0\uCE68\u2019 \uD560 \uB54C\uB9C8\uB2E4 \uB79C\uB354\uBBF9 \uD558\uAC8C \uBCC0\uD569\uB2C8\uB2E4. (\uCD5C\uC18C\uC218\uB7C9 1\uAC1C, \uCD5C\uB300 \uC218\uB7C93\uAC1C)")),
+                    React.createElement("h3", null, "\uAE08\uC804 \uD22C\uC785 \uC601\uC5ED"),
+                    React.createElement("p", null, "\uC0C1\uD488\uC744 \uAD6C\uB9E4\uD558\uAE30 \uC704\uD574 \uB3D9\uC804\uC774\uB098 \uC9C0\uD3D0\uB97C \uD22C\uC785\uD558\uBA70 \uBB3C\uAC74\uC744 \uAD6C\uB9E4\uD558\uBA74 \uCDA9\uC804\uD55C \uB3C8\uC744 \uC0AD\uAC10\uD558\uB294 \uAE30\uB2A5\uC744 \uD558\uB294 \uC601\uC5ED\uC785\uB2C8\uB2E4."),
+                    React.createElement("ol", null,
+                        React.createElement("li", null, "\uC88C\uCE21 \uB05D\uC5D0\uB294 \uB3D9\uC804/\uC9C0\uD3D0 \uD22C\uC785\uAD6C, \uC6B0\uCE21\uC5D0\uB294 \uC9C0\uD3D0\uC640 \uB3D9\uC804\uC774 \uC790\uB9AC\uD558\uAC8C \uB429\uB2C8\uB2E4."),
+                        React.createElement("li", null, "\uB0B4 \uC8FC\uBA38\uB2C8\uC5D0 \uB4E4\uC5B4\uC788\uB294 \uB3C8\uC740 10,000\uC6D0 \uC785\uB2C8\uB2E4. \uC8FC\uBA38\uB2C8 \uC548\uC758 \uB3C8\uC740 \uB3D9\uC804\uACFC \uC9C0\uD3D0\uC758 \uAD6C\uBD84\uC774 \uC5C6\uC2B5\uB2C8\uB2E4. \uAEBC\uB0B4\uB294 \uB300\uB85C(\uC6B0\uCE21\uC758 \uB3D9\uC804 \uB610\uB294 \uC9C0\uD3D0 \uBC84\uD2BC\uC744 \uD074\uB9AD\uD574\uC11C \uB4DC\uB798\uADF8 \uD558\uB294 \uAC83\uC744 \u2018\uAEBC\uB0B8\uB2E4\u2019 \uB77C\uACE0 \uD45C\uD604\uD569\uB2C8\uB2E4) \uC9C0\uD3D0\uAC00 \uB418\uAE30\uB3C4, \uB3D9\uC804\uC774 \uB418\uAE30\uB3C4 \uD569\uB2C8\uB2E4."),
+                        React.createElement("li", null, "\uC6B0\uCE21\uC758 \uC9C0\uD3D0 \uB610\uB294 \uB3D9\uC804\uC744 \uB4DC\uB798\uADF8\uD574\uC11C, \uC88C\uCE21 \uD22C\uC785\uAD6C\uC5D0 \uB4DC\uB86D \uD558\uBA74 \uB3C8\uC744 \uB123\uC740 \uAC83\uC774 \uB429\uB2C8\uB2E4."),
+                        React.createElement("li", null, "\uB3C8\uC744 \uB123\uC73C\uBA74, \uD22C\uC785\uAD6C\uC5D0 \uD604\uC7AC \uC5BC\uB9C8\uAC00 \uB4E4\uC5B4\uAC14\uB294\uC9C0 \uD45C\uC2DC\uB429\uB2C8\uB2E4. \uC790\uD310\uAE30\uAC00 \uAD6C\uC2DD\uC774\uB77C 3,000\uC6D0 \uC774\uC0C1 \uB4E4\uC5B4\uAC00\uC9C0 \uC54A\uC73C\uBA70, \uC9C0\uD3D0\uB294 2\uC7A5 \uC774\uC0C1 \uB4E4\uC5B4\uAC00\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uB3D9\uC804\uC740 \uD22C\uC785 \uC81C\uD55C\uC774 \uC5C6\uC2B5\uB2C8\uB2E4."),
+                        React.createElement("li", null, "\uB3C8\uC744 \uB4DC\uB798\uADF8\uD574\uC11C \uD22C\uC785\uAD6C\uC5D0 \uB4DC\uB86D \uD574\uC57C \uD558\uB294\uB370, \uC2E4\uC218\uB85C \uD22C\uC785\uAD6C \uBC14\uAE65 \uC601\uC5ED\uC5D0 \uB4DC\uB86D \uD558\uB294 \uACBD\uC6B0 \uD22C\uC785\uAD6C\uC5D0 \uB3C8\uC774 \uC62C\uB77C\uAC00\uC9C0 \uC54A\uACE0 \uB0B4 \uC8FC\uBA38\uB2C8\uC5D0\uC11C\uB3C4 \uADF8\uB9CC\uD07C \uAE4E\uC774\uAC8C \uB429\uB2C8\uB2E4. \uB3C8\uC744 \uB5A8\uC5B4\uB728\uB9B0 \uAC83\uC785\uB2C8\uB2E4. \uB2E4\uC2DC \uC8FC\uC6B8 \uC218\uB294 \uC5C6\uC2B5\uB2C8\uB2E4."),
+                        React.createElement("li", null, "\uC0C1\uD488\uC744 \uAD6C\uB9E4\uD55C \uACBD\uC6B0 \uD22C\uC785\uAD6C\uC758 \uAE08\uC561 \uD45C\uC2DC\uAC00 \uCC28\uAC10\uB41C \uAE08\uC561\uC73C\uB85C \uBC14\uB00C\uC5B4 \uD45C\uC2DC \uB418\uC5B4\uC57C \uD569\uB2C8\uB2E4."),
+                        React.createElement("li", null, "\uBC18\uD658 \uBC84\uD2BC\uC744 \uB204\uB974\uBA74 \uD22C\uC785\uAD6C\uC5D0 \uD45C\uC2DC\uB41C \uAE08\uC561\uC774 \uB0B4 \uC8FC\uBA38\uB2C8\uB85C \uBC18\uD658\uB429\uB2C8\uB2E4.")),
+                    React.createElement("h3", null, "\uCF58\uC194 \uC601\uC5ED"),
+                    React.createElement("p", null, "\uBAA8\uB4E0 \uD589\uB3D9\uC5D0 \uB300\uD55C \uBA54\uC2DC\uC9C0\uB97C \uCD9C\uB825\uD558\uB294 \uC601\uC5ED\uC785\uB2C8\uB2E4."),
+                    React.createElement("ol", null,
+                        React.createElement("li", null, "\uC0C1\uD488 \uC804\uC2DC \uC601\uC5ED\uACFC \uAE08\uC804 \uD22C\uC785 \uC601\uC5ED\uC5D0\uC11C \uC77C\uC5B4\uB098\uB294 \uBAA8\uB4E0 \uD589\uB3D9\uC5D0 \uB300\uD55C \uBA54\uC2DC\uC9C0\uB97C \uCD9C\uB825\uD569\uB2C8\uB2E4."),
+                        React.createElement("li", null, "\uCF58\uC194 \uB0B4\uC6A9\uC740 \uC2A4\uD06C\uB864\uC774 \uAC00\uB2A5\uD558\uB3C4\uB85D \uD569\uB2C8\uB2E4."),
+                        React.createElement("li", null, "\uC2A4\uD06C\uB864\uC740 \uD56D\uC0C1 \uCD5C\uC2E0 \uC815\uBCF4 \uCD5C \uD558\uB2E8\uC5D0 \uC704\uCE58(\uC720\uC9C0)\uD558\uC5EC \uCD5C\uC2E0 \uC815\uBCF4\uB97C \uBCFC \uC218 \uC788\uB3C4\uB85D \uD574\uC57C \uD569\uB2C8\uB2E4."))),
+                React.createElement("div", { id: "dragging_layer" })),
+            React.createElement(Footer_1.default, null)));
+    };
+    return Machine;
+}(React.Component));
+exports.default = Machine;
+
+},{"react":8,"../../components/BeverageItem":33,"../../components/footer/Footer":35,"../../components/header/Header":34,"../../components/wallet/Wallet":37}],2:[function(require,module,exports) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+require("./css/machine.css");
+var React = require("react");
+var ReactDOM = require("react-dom");
+var Machine_1 = require("./containers/machine/Machine");
+ReactDOM.render(React.createElement(Machine_1.default, null), document.getElementById("root"));
+
+},{"./css/machine.css":3,"react":8,"react-dom":9,"./containers/machine/Machine":36}],0:[function(require,module,exports) {
 var global = (1, eval)('this');
 var OldModule = module.bundle.Module;
 function Module() {
@@ -18110,7 +18208,7 @@ function Module() {
 module.bundle.Module = Module;
 
 if (!module.bundle.parent) {
-  var ws = new WebSocket('ws://localhost:59069/');
+  var ws = new WebSocket('ws://localhost:58447/');
   ws.onmessage = function(event) {
     var data = JSON.parse(event.data);
 
@@ -18211,4 +18309,4 @@ function hmrAccept(bundle, id) {
     return hmrAccept(global.require, id)
   });
 }
-},{}]},{},[0,4])
+},{}]},{},[0,2])
