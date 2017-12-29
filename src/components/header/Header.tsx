@@ -1,19 +1,28 @@
 import * as React from "react";
 
-class Header extends React.Component {
+interface HeaderState {
+  title: string
+}
+
+interface HeaderProps {
+  onClickHeader: Function
+}
+
+class Header extends React.Component<HeaderProps, HeaderState> {
   public title = 'Vending Machine';
 
-  constructor(props: {}) {
+  constructor(props) {
     super(props);
   }
 
   render(): JSX.Element {
     return (
-      <div id="header">
+      <div id="header" onClick={this.props.onClickHeader}>
         <h1>{this.title}</h1>
       </div>
     )
   }
+
 }
 
 export default Header;

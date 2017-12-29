@@ -1,4 +1,5 @@
 import * as React from "react";
+import { connect } from 'react-redux';
 
 interface IWallet {
   currentMoney: number;
@@ -12,17 +13,26 @@ class Wallet extends React.Component<{}, IWallet> {
     { className: 'w1000', value: 1000 }
   ]
 
-  constructor(props: {}) {
+  constructor(props: any) {
     super(props);
     this.state = { currentMoney: 10000 };
   }
 
-  decreaseMoney(value: number): any {
-    this.setState({ currentMoney: this.state.currentMoney - value });
+  componentDidMount() {
+    console.log(this.props);
+  }
+
+  decreaseMoney(value: number) {
+    this.setState(this.state, { currentMoney: this.state.currentMoney - value });
   }
 
   selectMoney(elTarget: HTMLElement, value: number) {
     this.decreaseMoney(value);
+    debugger;
+  }
+
+  public handleClick() {
+    debugger;
   }
 
   public render(): JSX.Element {
@@ -36,7 +46,7 @@ class Wallet extends React.Component<{}, IWallet> {
         <h3>내 주머니</h3>
         <ul>
           {this.coins.map((coin, index) => (
-            <li>
+            <li key={index}>
               <div className={`${coin.className} _drag_able`} onClick={(e) => {
                 this.selectMoney(e.currentTarget, coin.value)
               }}>
@@ -51,4 +61,9 @@ class Wallet extends React.Component<{}, IWallet> {
   }
 }
 
-export default Wallet;
+// export default Wallet;
+export default connect((state) => {
+  return state.wallet;
+}, (dispatch) => ({
+  handleClick: this.handleClick
+}))(Wallet)

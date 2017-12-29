@@ -1,18 +1,33 @@
 import * as React from "react";
-import BeverageItems from '../../components/BeverageItem';
 import Footer from '../../components/footer/Footer';
 import Header from '../../components/header/Header';
 import Wallet from '../../components/wallet/Wallet';
+import BeverageItems from '../../components/beverage/BeverageItem';
 
-class Machine extends React.Component {
+interface MachineState {
+  activeAside: boolean
+}
+
+class Machine extends React.Component<{}, MachineState> {
   constructor(props: {}) {
     super(props);
+    this.state = { activeAside: false };
   }
 
-  public render() {
+  public onClickHeader() {
+    if ( this.state.activeAside ) {
+      this.setState({ activeAside: false });
+    } else {
+      this.setState({ activeAside: true });
+    }
+  }
+
+  public render(): JSX.Element {
     return (
       <div id="wrap">
-        <Header/>
+        <Header onClickHeader={() => {
+          this.onClickHeader()
+        }}/>
         {/*<!-- container --> */}
         <div id="container">
           {/*<!-- content --> */}
@@ -44,7 +59,7 @@ class Machine extends React.Component {
           </div>
           {/*<!-- //content --> */}
           {/*<!-- aside --> */}
-          <div className="aside">
+          <div className={this.state.activeAside ? 'aside on' : 'aside'}>
             <h2>자바스크립트를 이용한 가상의 자동판매기 구현 </h2>
             <h3>상품전시 영역</h3>
             <p>상품이 전시되고, 사용자가 상품을 클릭하여 물건을 구매하는 영역입니다.</p>
